@@ -19,8 +19,8 @@ using [Spring Boot](https://spring.io/projects/spring-boot) and backed with [Mon
 ## NOTES:
 1. Do not add `_id`, `createdByUser`, `updatedByUser`, `isActive`, `createdDateTime`, `updatedDateTime` and `additionalProperties` variables as these are defined in BaseEntity.
 2. Follow the naming convention while defining json file and keys.
-3. Please change the connection parameter defined in resources/application.yml.
-4. Do not use space in Application name as it will decide name of SpringBootClass.
+3. Please change the connection parameter defined in `resources/application.yml`.
+4. **Do not use space in Application name as it will decide name of SpringBootClass**.
 
 ## How to Use :
 
