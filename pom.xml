@@ -132,7 +132,7 @@
                                 <mainClass>com.devop.aashish.App</mainClass>
                             </manifest>
                         </archive>
-                        <finalName>AndroidSkeletonHelper</finalName>
+                        <finalName>RestServiceGenerator</finalName>
                         <appendAssemblyId>false</appendAssemblyId>
                     </configuration>
                 </plugin>
