@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ${ApplicationName}
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${DatabaseName}
+
+security:
+  jwt:
+    expiration:
+      user: 86400
+    secret: ThisIsTheTokenKeySecret
+
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+          web: DEBUG
+          data: DEBUG
