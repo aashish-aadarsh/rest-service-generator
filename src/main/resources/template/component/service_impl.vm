@@ -1,0 +1,82 @@
+package ${PackageId}.application.service.impl;
+
+import ${PackageId}.application.exception.InvalidInputException;
+import ${PackageId}.application.service.${ResourceSingular}Service;
+import ${PackageId}.application.utility.SecurityUtil;
+import ${PackageId}.configuration.aop.annotation.LogMethodInfo;
+import ${PackageId}.domain.${ResourceAllSmallCase}.*;
+import ${PackageId}.domain.${ResourceAllSmallCase}.repository.${ResourceSingular}Repository;
+
+import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+@LogMethodInfo
+public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Service {
+
+
+    @Autowired
+    private ${ResourceSingular}Repository ${ResourceSmallCase}Repository;
+
+    @Override
+    public List<${ResourceSingular}> save${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List) {
+        ${ResourceSmallCase}List.forEach(${ResourceSmallCase} -> {
+            ${ResourceSmallCase}.createdByUser = SecurityUtil.loggedInUser().getUserId();
+            ${ResourceSmallCase}.createdDateTime = new Date();
+            ${ResourceSmallCase}.updatedDateTime = null;
+            ${ResourceSmallCase}._id = null;
+        });
+        return ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
+    }
+
+    @Override
+    public List<${ResourceSingular}> update${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List) {
+        List<${ResourceSingular}> valid${ResourceSingular}List = validateData(${ResourceSmallCase}List);
+        return ${ResourceSmallCase}Repository.saveAll(valid${ResourceSingular}List);
+    }
+
+
+    @Override
+    public String delete${ResourcePlural}(String[] ${ResourceSmallCase}Ids) {
+        Arrays.asList(${ResourceSmallCase}Ids).forEach(id -> {
+            ${ResourceSmallCase}Repository.deleteAll(get${ResourcePlural}(${ResourceSmallCase}Ids));
+        });
+        return "Success";
+    }
+
+    @Override
+    public List<${ResourceSingular}> getAll${ResourcePlural}() {
+        return ${ResourceSmallCase}Repository.findAll();
+    }
+
+    @Override
+    public List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids) {
+        Iterable<String> values = new HashSet<>(Arrays.asList(${ResourceSmallCase}Ids));
+        Iterable<${ResourceSingular}> resultItr = ${ResourceSmallCase}Repository.findAllById(values);
+        return Lists.newArrayList(resultItr);
+    }
+
+    private List<${ResourceSingular}> validateData(List<${ResourceSingular}> ${ResourceSmallCase}List) {
+        return ${ResourceSmallCase}List.stream().filter(${ResourceSmallCase} -> {
+            if (null != ${ResourceSmallCase}._id && !${ResourceSmallCase}._id.isEmpty()) {
+                Optional<${ResourceSingular}> fetched${ResourceSingular} = ${ResourceSmallCase}Repository.findById(${ResourceSmallCase}._id);
+                if (fetched${ResourceSingular}.isPresent()) {
+                    ${ResourceSmallCase}.createdDateTime = fetched${ResourceSingular}.get().createdDateTime;
+                    ${ResourceSmallCase}.createdByUser = fetched${ResourceSingular}.get().createdByUser;
+                    ${ResourceSmallCase}.updatedByUser = SecurityUtil.loggedInUser().getUserId();
+                    ${ResourceSmallCase}.updatedDateTime = new Date();
+                    return true;
+                }
+                throw new InvalidInputException("Id should be a valid DocumentId");
+            } else
+                throw new InvalidInputException("Id must not be null");
+
+        }).collect(Collectors.toList());
+    }
+}

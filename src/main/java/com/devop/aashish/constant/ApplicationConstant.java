@@ -25,5 +25,6 @@ public class ApplicationConstant {
     public static final String PACKAGE_DOMAIN = "domain";
     public static final String PACKAGE_CONTROLLER = "controller";
     public static final String PACKAGE_SERVICE = "application.service";
+    public static final String PACKAGE_SERVICE_IMPL = "application.service.impl";
     public static final String PACKAGE_REPOSITORY = "repository";
 }

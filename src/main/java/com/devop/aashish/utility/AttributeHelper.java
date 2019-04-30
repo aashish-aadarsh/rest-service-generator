@@ -102,11 +102,18 @@ public class AttributeHelper {
         }
         return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "Service";
     }
-
+    public static String getServiceImplName(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "ServiceImpl";
+        }
+        return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "ServiceImpl";
+    }
     public static String getRepositoryName(String domain) {
         if (null == domain || domain.trim().isEmpty()) {
             return "Repository";
         }
         return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "Repository";
     }
+
+
 }

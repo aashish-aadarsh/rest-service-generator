@@ -17,7 +17,10 @@ public class ServiceGenerator {
     public static void generateFiles() {
 
         generateService();
+        generateServiceImpl();
     }
+
+
 
 
     private static void generateService() {
@@ -26,6 +29,17 @@ public class ServiceGenerator {
             String generatedFileName = AttributeHelper.getServiceName(domain) + ApplicationConstant.EXTENSION_JAVA;
             String generatedFileDirectory = DirectoryConfig.PACKAGE_DIRECTORY + File.separator +
                     PathUtil.getPathFromPackageName(ApplicationConstant.PACKAGE_SERVICE) + File.separator + generatedFileName;
+            Map<String, String> paramMap = getValues(domain);
+            new VelocityConfig().initWriting(paramMap, generatedFileDirectory, templateFileLocation);
+        });
+    }
+
+    private static void generateServiceImpl() {
+        String templateFileLocation = TemplateFileConstant.SERVICE_IMPL_FILE_LOCATION;
+        GeneratorConfig.DOMAIN_SET.forEach(domain -> {
+            String generatedFileName = AttributeHelper.getServiceImplName(domain) + ApplicationConstant.EXTENSION_JAVA;
+            String generatedFileDirectory = DirectoryConfig.PACKAGE_DIRECTORY + File.separator +
+                    PathUtil.getPathFromPackageName(ApplicationConstant.PACKAGE_SERVICE_IMPL) + File.separator + generatedFileName;
             Map<String, String> paramMap = getValues(domain);
             new VelocityConfig().initWriting(paramMap, generatedFileDirectory, templateFileLocation);
         });

@@ -38,5 +38,6 @@ public class TemplateFileConstant {
 
     public static final String CONTROLLER_FILE_LOCATION = "template/component/controller.vm";
     public static final String SERVICE_FILE_LOCATION = "template/component/service.vm";
+    public static final String SERVICE_IMPL_FILE_LOCATION = "template/component/service_impl.vm";
     public static final String REPO_FILE_LOCATION = "template/component/repo.vm";
 }

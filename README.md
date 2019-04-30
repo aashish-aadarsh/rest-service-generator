@@ -17,7 +17,7 @@ using [Spring Boot](https://spring.io/projects/spring-boot) and backed with [Mon
         5. facade - Empty package with two sub-packages if application want to introduce DTO layer and corresponding mapper from DTO to entity.
 		
 ## NOTES:
-1. Do not add _id, createdByUser, updatedByUser, isActive, createdDateTime, updatedDateTime and additionalProperties variables as these are defined in BaseEntity.
+1. Do not add `_id`, `createdByUser`, `updatedByUser`, `isActive`, `createdDateTime`, `updatedDateTime` and `additionalProperties` variables as these are defined in BaseEntity.
 2. Follow the naming convention while defining json file and keys.
 3. Please change the connection parameter defined in resources/application.yml.
 4. Do not use space in Application name as it will decide name of SpringBootClass.
@@ -34,7 +34,7 @@ directory.
        ii. Create the `json` file for which domain has to be generated.
 
 4. Open command prompt and change directory where jar file is present and execute below command.     
-         `java -jar RestServiceGenerator`  
+         `java -jar RestServiceGenerator.jar`
          
     Make sure jar and properties directory are present in same directory.
  5. Wait till application finishes its execution.
