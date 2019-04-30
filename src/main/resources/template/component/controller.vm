@@ -47,7 +47,7 @@ public class ${ResourceSingular}Controller {
         return ResponseEntity.ok(${ResourceSmallCase}Service.update${ResourcePlural}(${ResourceSmallCase}List));
     }
 
-    @DeleteMapping("/${ResourceAPI}/v1/{productIds}")
+    @DeleteMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Ids}")
     public ResponseEntity<?> delete${ResourcePlural}(@PathVariable String[] ${ResourceSmallCase}Ids) {
         return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourcePlural}(${ResourceSmallCase}Ids));
     }
