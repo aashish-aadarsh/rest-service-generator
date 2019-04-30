@@ -1,0 +1,12 @@
+{
+  "classificationType": {
+    "id": 0
+  },
+  "parentClassificationType": {
+    "id": 0
+  },
+  "productClassificationCategory": {
+    "dataCode": "string",
+    "label": "string"
+  }
+}

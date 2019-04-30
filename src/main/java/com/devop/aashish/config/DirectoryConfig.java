@@ -1,4 +1,4 @@
-package com.devop.aashish.parser;
+package com.devop.aashish.config;
 
 import com.devop.aashish.constant.ApplicationConstant;
 import com.devop.aashish.utility.PathUtil;

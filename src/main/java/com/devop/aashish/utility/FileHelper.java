@@ -1,6 +1,6 @@
 package com.devop.aashish.utility;
 
-import com.devop.aashish.parser.GeneratorConfig;
+import com.devop.aashish.config.GeneratorConfig;
 
 import java.io.*;
 import java.nio.file.Files;

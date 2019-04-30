@@ -20,6 +20,12 @@ public class TemplateFileConstant {
     public static final String KEY_PACKAGE_ID = "PackageId";
     public static final String KEY_DATABASE_NAME = "DatabaseName";
 
+    public static final String KEY_RESOURCE_NAME_SINGULAR = "ResourceSingular";
+    public static final String KEY_RESOURCE_NAME_PLURAL = "ResourcePlural";
+    public static final String KEY_RESOURCE_NAME_SMALL_CASE = "ResourceSmallCase";
+    public static final String KEY_RESOURCE_NAME_ALL_SMALL_CASE = "ResourceAllSmallCase";
+    public static final String KEY_RESOURCE_NAME_API = "ResourceAPI";
+
 
 
     public static final String POM_FILE_LOCATION = "template/core/pom.vm";
@@ -29,4 +35,8 @@ public class TemplateFileConstant {
 
     public static final String APPLICATION_PROPERTY_FILE_LOCATION = "template/core/resource.vm";
     public static final String APPLICATION_PROPERTY_FILE_NAME = "application.yml";
+
+    public static final String CONTROLLER_FILE_LOCATION = "template/component/controller.vm";
+    public static final String SERVICE_FILE_LOCATION = "template/component/service.vm";
+    public static final String REPO_FILE_LOCATION = "template/component/repo.vm";
 }

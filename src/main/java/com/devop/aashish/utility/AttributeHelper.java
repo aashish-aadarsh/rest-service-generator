@@ -1,7 +1,5 @@
 package com.devop.aashish.utility;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,50 +17,14 @@ public class AttributeHelper {
 
     /**
      * @param resourceName Name of resource
-     * @return The entity name from resource file name
-     */
-    static String getEntityName(String resourceName) {
-        if (null == resourceName || resourceName.trim().isEmpty()) {
-            return "";
-        }
-        return String.valueOf(resourceName.charAt(0)).toUpperCase() + resourceName.substring(1);
-    }
-
-    /**
-     * @param resourceName Name of resource
-     * @return The parentId name in case of a json has list attributes and the mapping table needs
-     * reference to parent table Id field name
-     */
-    static String getParentIdName(String resourceName) {
-        if (null == resourceName || resourceName.trim().isEmpty()) {
-            return "";
-        }
-        return String.valueOf(resourceName.charAt(0)).toLowerCase() + resourceName.substring(1)
-                + "Id";
-    }
-
-    /**
-     * @param resourceName Name of resource
-     * @return The prefix to be appended in case a json has nested object class and the column generated
-     * for nested class has to be start with parent resource name.
-     */
-    static String getPrefixName(String resourceName) {
-        if (null == resourceName || resourceName.trim().isEmpty()) {
-            return "";
-        }
-        return StringUtils.lowerCase(resourceName.trim()) + "_";
-    }
-
-    /**
-     * @param resourceName Name of resource
-     * @return The table name for a resource file.
+     * @return The documentName name for a resource file.
      *
      * <eg>
      * if a resource file name is UserDemographicAddress,
      * the table name generated would be user_demographic_address
      * </eg>
      */
-    static String getTableName(String resourceName) {
+    static String getDocumentName(String resourceName) {
         if (null == resourceName || resourceName.trim().isEmpty()) {
             return "";
         }
@@ -77,5 +39,74 @@ public class AttributeHelper {
         return sb.toString();
     }
 
+    /**
+     * @param resourceName Name of resource
+     * @return The controller name for a resource file.
+     *
+     * <eg>
+     * if a resource file name is UserDemographicAddress,
+     * the controller name generated would be UserDemographicAddressController
+     * </eg>
+     */
+    public static String getControllerName(String resourceName) {
+        if (null == resourceName || resourceName.trim().isEmpty()) {
+            return "Controller";
+        }
+        return String.valueOf(resourceName.charAt(0)).toUpperCase() + resourceName.substring(1) + "Controller";
+    }
 
+    public static String getSingularResource(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "Domain";
+        }
+        return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1);
+    }
+
+    public static String getPluralResource(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "Domain";
+        }
+        if (domain.endsWith("y")) {
+            return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1, domain.length() - 1) + "ies";
+        }
+        return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1);
+    }
+
+    public static String getResourceSmallCase(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "domain";
+        }
+        return String.valueOf(domain.charAt(0)).toLowerCase() + domain.substring(1);
+    }
+
+    public static String getResourceAllSmallCase(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "domain";
+        }
+        return domain.toLowerCase();
+    }
+
+    public static String getResourceNameAPI(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "Domain";
+        }
+        if (domain.endsWith("y")) {
+            return String.valueOf(domain.charAt(0)).toLowerCase() + domain.substring(1, domain.length() - 1) + "ies";
+        }
+        return String.valueOf(domain.charAt(0)).toLowerCase() + domain.substring(1) + "s";
+    }
+
+    public static String getServiceName(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "Service";
+        }
+        return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "Service";
+    }
+
+    public static String getRepositoryName(String domain) {
+        if (null == domain || domain.trim().isEmpty()) {
+            return "Repository";
+        }
+        return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "Repository";
+    }
 }

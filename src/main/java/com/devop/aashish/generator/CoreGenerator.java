@@ -2,9 +2,9 @@ package com.devop.aashish.generator;
 
 import com.devop.aashish.constant.ApplicationConstant;
 import com.devop.aashish.constant.TemplateFileConstant;
-import com.devop.aashish.parser.DirectoryConfig;
-import com.devop.aashish.parser.GeneratorConfig;
-import com.devop.aashish.parser.VelocityConfig;
+import com.devop.aashish.config.DirectoryConfig;
+import com.devop.aashish.config.GeneratorConfig;
+import com.devop.aashish.config.VelocityConfig;
 
 import java.io.File;
 import java.util.HashMap;

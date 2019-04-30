@@ -1,0 +1,7 @@
+package ${PackageId}.domain.${ResourceAllSmallCase}.repository;
+
+import ${PackageId}.domain.${ResourceAllSmallCase}.*;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface ${ResourceSingular}Repository extends MongoRepository<${ResourceSingular}, String> {
+}

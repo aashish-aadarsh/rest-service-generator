@@ -1,7 +1,7 @@
 package com.devop.aashish.generator;
 
 import com.devop.aashish.constant.PropertyFileConstant;
-import com.devop.aashish.parser.DirectoryConfig;
+import com.devop.aashish.config.DirectoryConfig;
 import com.devop.aashish.utility.FileHelper;
 
 import java.io.IOException;

@@ -1,0 +1,60 @@
+{
+  "owningEntityId": 0,
+  "owningEntityType": "string",
+  "description": "string",
+  "longDescription": "string",
+  "name": "string",
+  "productBrand": "string",
+  "productClass": {
+    "dataCode": "string",
+    "label": "string"
+  },
+  "productClassificationCode": {
+    "dataCode": "string",
+    "label": "string"
+  },
+  "productCode": "string",
+  "productSKUList": [
+    {
+      "attachmentList": [
+        {
+          "description": "string",
+          "name": "string",
+          "path": "string",
+          "seqNumber": 0,
+          "attachmentType": "string"
+        }
+      ],
+      "cost": {
+        "currency": "string",
+        "value": 0,
+        "symbol": "string"
+      },
+      "description": "string",
+      "longDescription": "string",
+      "minOrderQty": 0,
+      "name": "string",
+      "notes": "string",
+      "productSKUCode": "string",
+      "productSKUSpecList": [
+        {
+          "notes": "string",
+          "specificationMaster": {
+            "paramName": "string",
+            "paramType": "string",
+            "paramProductSKUClassification": "string"
+          },
+          "value": "string"
+        }
+      ],
+      "productSKUType": {
+        "dataCode": "string",
+        "label": "string"
+      }
+    }
+  ],
+  "productType": {
+    "dataCode": "string",
+    "label": "string"
+  }
+}

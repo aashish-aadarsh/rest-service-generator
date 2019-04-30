@@ -1,7 +1,10 @@
-package com.devop.aashish.parser;
+package com.devop.aashish.config;
 
 import com.devop.aashish.constant.PropertyFileConstant;
 import com.devop.aashish.utility.PropertyFileUtil;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -16,7 +19,6 @@ import com.devop.aashish.utility.PropertyFileUtil;
 public class GeneratorConfig {
 
     public static String APPLICATION_NAME;
-    static String APPLICATION_OUTPUT_DIRECTORY;
     public static String GROUP_ID;
     public static String ARTIFACT_ID;
     public static String PACKAGE_ID;
@@ -24,6 +26,8 @@ public class GeneratorConfig {
     public static String APP_VERSION;
     public static String SPRING_BOOT_VERSION;
     public static String JAVA_VERSION;
+    public static Set<String> DOMAIN_SET = new HashSet<>();
+    static String APPLICATION_OUTPUT_DIRECTORY;
     private static PropertyFileUtil propertyFileUtil;
 
     public GeneratorConfig(String generatorFilePath) {

@@ -1,4 +1,4 @@
-package com.devop.aashish.parser;
+package com.devop.aashish.config;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;

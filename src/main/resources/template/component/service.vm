@@ -1,0 +1,18 @@
+package ${PackageId}.application.service;
+
+import ${PackageId}.domain.${ResourceAllSmallCase}.*;
+
+import java.util.List;
+
+public interface ${ResourceSingular}Service {
+
+    List<${ResourceSingular}> save${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List);
+
+    List<${ResourceSingular}> update${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List);
+
+    String delete${ResourcePlural}(String[] ${ResourceSmallCase}Ids);
+
+    List<${ResourceSingular}> getAll${ResourcePlural}();
+
+    List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids);
+}

@@ -1,0 +1,55 @@
+package ${PackageId}.controller;
+
+import ${PackageId}.application.service.${ResourceSingular}Service;
+import ${PackageId}.configuration.aop.annotation.LogExecutionTime;
+import ${PackageId}.configuration.aop.annotation.LogMethodInfo;
+import ${PackageId}.domain.${ResourceAllSmallCase}.*;
+
+import io.swagger.annotations.Api;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping(value = "/api")
+@LogExecutionTime
+@LogMethodInfo
+@Api(tags ={"${ResourceSingular}"})
+public class ${ResourceSingular}Controller {
+
+    private static final Logger logger = LoggerFactory.getLogger(${ResourceSingular}Controller.class);
+
+    @Autowired
+    private ${ResourceSingular}Service ${ResourceSmallCase}Service;
+
+    @PostMapping("/${ResourceAPI}/v1")
+    public ResponseEntity<?> save${ResourcePlural}(@Valid @RequestBody List<${ResourceSingular}> ${ResourceSmallCase}List) {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.save${ResourcePlural}(${ResourceSmallCase}List));
+    }
+
+    @GetMapping("/${ResourceAPI}/v1")
+    public ResponseEntity<?> getAll${ResourcePlural}() {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.getAll${ResourcePlural}());
+    }
+
+    @GetMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Ids}")
+    public ResponseEntity<?> get${ResourcePlural}(@PathVariable String[] ${ResourceSmallCase}Ids) {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.get${ResourcePlural}(${ResourceSmallCase}Ids));
+    }
+
+    @PutMapping("/${ResourceAPI}/v1")
+    public ResponseEntity<?> update${ResourcePlural}(@Valid @RequestBody List<${ResourceSingular}> ${ResourceSmallCase}List) {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.update${ResourcePlural}(${ResourceSmallCase}List));
+    }
+
+    @DeleteMapping("/${ResourceAPI}/v1/{productIds}")
+    public ResponseEntity<?> delete${ResourcePlural}(@PathVariable String[] ${ResourceSmallCase}Ids) {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourcePlural}(${ResourceSmallCase}Ids));
+    }
+
+}
