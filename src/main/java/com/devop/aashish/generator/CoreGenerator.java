@@ -22,7 +22,7 @@ public class CoreGenerator {
     private static void generatePOMFile() {
         String templateFileLocation = TemplateFileConstant.POM_FILE_LOCATION;
         String generatedFileName = TemplateFileConstant.POM_FILE_NAME;
-        String generatedFileDirectory = DirectoryConfig.MAIN_DIRECTORY + File.separator + generatedFileName;
+        String generatedFileDirectory = DirectoryConfig.APP_DIRECTORY + File.separator + generatedFileName;
         Map<String, String> paramMap = getValues();
         new VelocityConfig().initWriting(paramMap, generatedFileDirectory, templateFileLocation);
 

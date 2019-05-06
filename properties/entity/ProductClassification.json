@@ -1,9 +1,0 @@
-{
-  "productClassificationCategory": {
-    "dataCode": "string",
-    "label": "string"
-  },
-  "name": "string",
-  "description": "string",
-  "productClassificationCode": "string"
-}
