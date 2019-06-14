@@ -102,7 +102,6 @@ public class AuthServiceImpl implements AuthService {
         userSecurity.setOtp(null);
         user.updatedDateTime = new Date();
         userRepository.save(user);
-        user.updatedDateTime = new Date();
         return SuccessMessage.USER_ACTIVATION;
     }
 
@@ -117,7 +116,6 @@ public class AuthServiceImpl implements AuthService {
         userSecurity.setOtp(otpGenerator.generateOTP());
         user.updatedDateTime = new Date();
         userRepository.save(user);
-        user.updatedDateTime = new Date();
         return SuccessMessage.USER_FORGOT_PASSWORD_OTP_GENERATED;
     }
 
@@ -152,7 +150,6 @@ public class AuthServiceImpl implements AuthService {
         }
         userSecurity.setPassword(passwordEncoder.encode(newPassword));
         user.updatedDateTime = new Date();
-        user.updatedByUser = SecurityUtil.loggedInUser().getUserId();
         userRepository.save(user);
         return SuccessMessage.USER_PASSWORD_CHANGED;
     }
