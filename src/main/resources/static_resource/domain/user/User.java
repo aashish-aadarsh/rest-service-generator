@@ -1,6 +1,6 @@
 package com.devop.aashish.java.myapplication.domain.user;
 
-import com.devop.aashish.java.myapplication.domain.BaseEntity;
+import com.devop.aashish.java.myapplication.domain.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.Set;
 @ToString
 @Builder
 @Document(collection = "user")
-public class User extends BaseEntity {
+public class User extends BaseTransactionalEntity {
 
     @NotBlank(message = "firstName can not be blank")
     private String firstName;

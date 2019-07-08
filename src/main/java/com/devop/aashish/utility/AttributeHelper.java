@@ -116,4 +116,17 @@ public class AttributeHelper {
     }
 
 
+    public static String getResourceNameSubDomain(String subDomain) {
+        if (null == subDomain || subDomain.trim().isEmpty()) {
+            return "SubDomain";
+        }
+        return String.valueOf(subDomain.charAt(0)).toUpperCase() + subDomain.substring(1);
+    }
+
+    public static String getResourceNameSubDomainSingular(String subDomain) {
+        if (null == subDomain || subDomain.trim().isEmpty()) {
+            return "subDomain";
+        }
+        return String.valueOf(subDomain.charAt(0)).toLowerCase() + subDomain.substring(1);
+    }
 }

@@ -1,0 +1,30 @@
+{
+  "userId": "string",
+  "userProfilePic": "",
+  "notes": "",
+  "userContact": [
+    {
+      "contactType": "CONTACT_TYPE.MOBILE",
+      "contactValue": "9999999999",
+      "isVerified": false,
+      "isPrimary": true
+    }
+  ],
+  "userAddress": [
+    {
+      "addressType": "ADDRESS_TYPE.PERMANENT",
+      "addressLine1": "",
+      "addressLine2": "",
+      "landMark": "",
+      "village": "",
+      "pinCode": 813210,
+      "district": "",
+      "state": "",
+      "country": ""
+    }
+  ],
+  "userQualification": {
+    "type": "",
+    "year": ""
+  }
+}

@@ -26,7 +26,7 @@ public class VelocityConfig {
     private Logger logger = LoggerFactory.getLogger(VelocityConfig.class.getName());
 
 
-    public void initWriting(Map<String, String> paramMap, String generatedFileDirectory, String templateFileLocation){
+    public void initWriting(Map<String, Object> paramMap, String generatedFileDirectory, String templateFileLocation) {
         initInfo();
         VelocityContext velocityContext = getVelocityContext(paramMap);
         writeFile(generatedFileDirectory, templateFileLocation, velocityContext);
@@ -46,7 +46,7 @@ public class VelocityConfig {
      * @param paramMap for velocity context
      * @return velocity context for provided Map
      */
-    private VelocityContext getVelocityContext(Map<String, String> paramMap) {
+    private VelocityContext getVelocityContext(Map<String, Object> paramMap) {
         VelocityContext context = new VelocityContext();
         paramMap.forEach(context::put);
         return context;

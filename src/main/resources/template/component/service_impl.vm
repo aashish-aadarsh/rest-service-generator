@@ -26,12 +26,7 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
 
     @Override
     public List<${ResourceSingular}> save${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List) {
-        ${ResourceSmallCase}List.forEach(${ResourceSmallCase} -> {
-            ${ResourceSmallCase}.createdByUser = SecurityUtil.loggedInUser().getUserId();
-            ${ResourceSmallCase}.createdDateTime = new Date();
-            ${ResourceSmallCase}.updatedDateTime = null;
-            ${ResourceSmallCase}._id = null;
-        });
+        ${ResourceSmallCase}List.forEach(this::initAuditFields);
         return ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
     }
 
@@ -44,9 +39,19 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
 
     @Override
     public String delete${ResourcePlural}(String[] ${ResourceSmallCase}Ids) {
-        Arrays.asList(${ResourceSmallCase}Ids).forEach(id -> {
-            ${ResourceSmallCase}Repository.deleteAll(get${ResourcePlural}(${ResourceSmallCase}Ids));
-        });
+    #if($EnableHardDelete)
+     ${ResourceSmallCase}Repository.deleteAll(get${ResourcePlural}(${ResourceSmallCase}Ids));
+    #else
+         List<${ResourceSingular}> deactivatedObjects = get${ResourcePlural}(${ResourceSmallCase}Ids).stream().peek(it -> {
+                 it.isActive = Boolean.FALSE;
+                 if (it.additionalProperties == null || it.additionalProperties.isEmpty())
+                      it.additionalProperties = Collections.singletonMap("InActiveDateTime", new Date());
+                  else
+                      it.additionalProperties.put("InActiveDateTime", new Date());
+         }).collect(Collectors.toList());
+
+     ${ResourceSmallCase}Repository.saveAll(deactivatedObjects);
+    #end
         return "Success";
     }
 
@@ -62,15 +67,62 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
         return Lists.newArrayList(resultItr);
     }
 
+#foreach ($subDomain in  ${SubDomainList})
+    @Override
+    public ${ResourceSingular} save${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}){
+        Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findById(${ResourceSmallCase}Id);
+        if (!result.isPresent()) {
+            throw new InvalidInputException("Id should be a valid existing DocumentId");
+        }
+        updateAuditFields(result.get());
+        result.get().${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.add(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+        return ${ResourceSmallCase}Repository.save(result.get());
+    }
+
+     @Override
+     public ${ResourceSingular} update${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}) {
+            Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomain}__id(${ResourceSmallCase}Id, ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}._id);
+            if (!result.isPresent()) {
+                throw new InvalidInputException("Id should be a valid existing DocumentId");
+            }
+            ${ResourceSingular} resultObject = result.get();
+            List<$subDomain> updatedList =
+                    resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.stream().filter(it -> !it._id.equals(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}._id))
+                            .collect(Collectors.toList());
+            updatedList.add(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+            resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.clear();
+            resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.addAll(updatedList);
+            updateAuditFields(resultObject);
+            return ${ResourceSmallCase}Repository.save(resultObject);
+     }
+
+
+    @Override
+    public String delete${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id){
+             Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomain}__id(${ResourceSmallCase}Id, ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id);
+             if (!result.isPresent()) {
+                 throw new InvalidInputException("Id should be a valid existing DocumentId");
+             }
+             ${ResourceSingular} resultObject = result.get();
+             List<$subDomain> updatedList =
+                     resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.stream().filter(it -> !it._id.equals(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id))
+                             .collect(Collectors.toList());
+             resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.clear();
+             resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.addAll(updatedList);
+             updateAuditFields(resultObject);
+             ${ResourceSmallCase}Repository.save(resultObject);
+             return "Success";
+    }
+
+
+#end
+
     private List<${ResourceSingular}> validateData(List<${ResourceSingular}> ${ResourceSmallCase}List) {
         return ${ResourceSmallCase}List.stream().filter(${ResourceSmallCase} -> {
             if (null != ${ResourceSmallCase}._id && !${ResourceSmallCase}._id.isEmpty()) {
                 Optional<${ResourceSingular}> fetched${ResourceSingular} = ${ResourceSmallCase}Repository.findById(${ResourceSmallCase}._id);
                 if (fetched${ResourceSingular}.isPresent()) {
-                    ${ResourceSmallCase}.createdDateTime = fetched${ResourceSingular}.get().createdDateTime;
-                    ${ResourceSmallCase}.createdByUser = fetched${ResourceSingular}.get().createdByUser;
-                    ${ResourceSmallCase}.updatedByUser = SecurityUtil.loggedInUser().getUserId();
-                    ${ResourceSmallCase}.updatedDateTime = new Date();
+                    updateAuditFields(${ResourceSmallCase}, fetched${ResourceSingular}.get());
                     return true;
                 }
                 throw new InvalidInputException("Id should be a valid DocumentId");
@@ -79,4 +131,24 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
 
         }).collect(Collectors.toList());
     }
+
+     private void initAuditFields(${ResourceSingular} ${ResourceSmallCase}){
+             ${ResourceSmallCase}.createdByUser = SecurityUtil.loggedInUser().getUserId();
+             ${ResourceSmallCase}.createdDateTime = new Date();
+             ${ResourceSmallCase}.updatedDateTime = null;
+             ${ResourceSmallCase}._id = null;
+             ${ResourceSmallCase}.isActive =  Boolean.TRUE;
+     }
+
+     private void updateAuditFields(${ResourceSingular} newValue, ${ResourceSingular} existingValue) {
+            newValue.createdDateTime = existingValue.createdDateTime;
+            newValue.createdByUser = existingValue.createdByUser;
+            newValue.updatedByUser = SecurityUtil.loggedInUser().getUserId();
+            newValue.updatedDateTime = new Date();
+     }
+
+     private void updateAuditFields(${ResourceSingular} ${ResourceSmallCase}) {
+            ${ResourceSmallCase}.updatedByUser = SecurityUtil.loggedInUser().getUserId();
+            ${ResourceSmallCase}.updatedDateTime = new Date();
+     }
 }

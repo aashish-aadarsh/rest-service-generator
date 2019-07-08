@@ -3,8 +3,7 @@ package com.devop.aashish.config;
 import com.devop.aashish.constant.PropertyFileConstant;
 import com.devop.aashish.utility.PropertyFileUtil;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -26,7 +25,10 @@ public class GeneratorConfig {
     public static String APP_VERSION;
     public static String SPRING_BOOT_VERSION;
     public static String JAVA_VERSION;
+    public static String GENERATE_SUB_RESOURCE;
+    public static String ENABLE_HARD_DELETE;
     public static Set<String> DOMAIN_SET = new HashSet<>();
+    public static Map<String, List<String>> SUB_DOMAIN_SET = new HashMap<>();
     static String APPLICATION_OUTPUT_DIRECTORY;
     private static PropertyFileUtil propertyFileUtil;
 
@@ -48,6 +50,8 @@ public class GeneratorConfig {
         APP_VERSION = propertyFileUtil.getProperty(PropertyFileConstant.APP_VERSION);
         SPRING_BOOT_VERSION = propertyFileUtil.getProperty(PropertyFileConstant.SPRING_BOOT_VERSION);
         JAVA_VERSION = propertyFileUtil.getProperty(PropertyFileConstant.JAVA_VERSION);
+        GENERATE_SUB_RESOURCE = propertyFileUtil.getProperty(PropertyFileConstant.GENERATE_SUB_RESOURCE);
+        ENABLE_HARD_DELETE = propertyFileUtil.getProperty(PropertyFileConstant.ENABLE_HARD_DELETE);
 
         PACKAGE_ID = GROUP_ID + "." + ARTIFACT_ID;
         DirectoryConfig.initInfo();

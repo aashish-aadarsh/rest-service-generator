@@ -12,6 +12,9 @@ public class SecurityUtil {
                 SecurityContextHolder.getContext().getAuthentication() == null) {
             throw new UnAuthenticatedException("User is not logged in");
         }
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String) {
+            throw new UnAuthenticatedException("User is not logged in");
+        }
         return (UserPrincipal) SecurityContextHolder.
                 getContext().getAuthentication().getPrincipal();
     }

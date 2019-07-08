@@ -52,4 +52,28 @@ public class ${ResourceSingular}Controller {
         return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourcePlural}(${ResourceSmallCase}Ids));
     }
 
+ #foreach ($subDomain in  ${SubDomainList})
+   @PostMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}")
+    public ResponseEntity<?> save${ResourceSingular}$subDomain(@PathVariable String ${ResourceSmallCase}Id,
+                                                    @Valid @RequestBody $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}) {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.save${ResourceSingular}$subDomain
+                     (${ResourceSmallCase}Id,${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}));
+    }
+
+    @PutMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}")
+     public ResponseEntity<?> update${ResourceSingular}$subDomain(@PathVariable String ${ResourceSmallCase}Id,
+                                                        @Valid @RequestBody $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}) {
+            return ResponseEntity.ok(${ResourceSmallCase}Service.update${ResourceSingular}$subDomain
+                         (${ResourceSmallCase}Id,${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}));
+     }
+
+    @DeleteMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}/{${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id}")
+     public ResponseEntity<?> delete${ResourceSingular}$subDomain(@PathVariable String ${ResourceSmallCase}Id,
+                                                       @PathVariable String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id) {
+           return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourceSingular}$subDomain
+                        (${ResourceSmallCase}Id,${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id));
+     }
+
+ #end
+
 }

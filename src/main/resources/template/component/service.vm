@@ -15,4 +15,14 @@ public interface ${ResourceSingular}Service {
     List<${ResourceSingular}> getAll${ResourcePlural}();
 
     List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids);
+
+#foreach ($subDomain in  ${SubDomainList})
+    ${ResourceSingular} save${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+
+    ${ResourceSingular} update${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+
+    String delete${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id);
+
+#end
+
 }

@@ -1,18 +1,11 @@
 package com.devop.aashish.generator;
 
-import com.devop.aashish.config.DirectoryConfig;
-import com.devop.aashish.config.GeneratorConfig;
 import com.devop.aashish.constant.PropertyFileConstant;
 import com.devop.aashish.utility.EntityParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class DomainGenerator {
     private static Logger logger = LoggerFactory.getLogger(DomainGenerator.class);

@@ -21,16 +21,13 @@ public class ServiceGenerator {
     }
 
 
-
-
     private static void generateService() {
         String templateFileLocation = TemplateFileConstant.SERVICE_FILE_LOCATION;
         GeneratorConfig.DOMAIN_SET.forEach(domain -> {
             String generatedFileName = AttributeHelper.getServiceName(domain) + ApplicationConstant.EXTENSION_JAVA;
             String generatedFileDirectory = DirectoryConfig.PACKAGE_DIRECTORY + File.separator +
                     PathUtil.getPathFromPackageName(ApplicationConstant.PACKAGE_SERVICE) + File.separator + generatedFileName;
-            Map<String, String> paramMap = getValues(domain);
-            new VelocityConfig().initWriting(paramMap, generatedFileDirectory, templateFileLocation);
+            new VelocityConfig().initWriting(getValues(domain), generatedFileDirectory, templateFileLocation);
         });
     }
 
@@ -40,20 +37,24 @@ public class ServiceGenerator {
             String generatedFileName = AttributeHelper.getServiceImplName(domain) + ApplicationConstant.EXTENSION_JAVA;
             String generatedFileDirectory = DirectoryConfig.PACKAGE_DIRECTORY + File.separator +
                     PathUtil.getPathFromPackageName(ApplicationConstant.PACKAGE_SERVICE_IMPL) + File.separator + generatedFileName;
-            Map<String, String> paramMap = getValues(domain);
-            new VelocityConfig().initWriting(paramMap, generatedFileDirectory, templateFileLocation);
+            new VelocityConfig().initWriting(getValues(domain), generatedFileDirectory, templateFileLocation);
         });
     }
 
 
-    private static Map<String, String> getValues(String domain) {
-        Map<String, String> param = new HashMap<>();
+    private static Map<String, Object> getValues(String domain) {
+        Map<String, Object> param = new HashMap<>();
         param.put(TemplateFileConstant.KEY_PACKAGE_ID, GeneratorConfig.PACKAGE_ID);
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_SINGULAR, AttributeHelper.getSingularResource(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_PLURAL, AttributeHelper.getPluralResource(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_SMALL_CASE, AttributeHelper.getResourceSmallCase(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_ALL_SMALL_CASE, AttributeHelper.getResourceAllSmallCase(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_API, AttributeHelper.getResourceNameAPI(domain));
+
+        param.put(TemplateFileConstant.KEY_RESOURCE_SUB_DOMAIN_LOOP, GeneratorConfig.SUB_DOMAIN_SET.get(domain));
+        param.put(TemplateFileConstant.KEY_ATTRIBUTE_HELPER, new AttributeHelper());
+        param.put(TemplateFileConstant.KEY_ENABLE_HARD_DELETE, Boolean.valueOf(GeneratorConfig.ENABLE_HARD_DELETE));
+
         return param;
     }
 }

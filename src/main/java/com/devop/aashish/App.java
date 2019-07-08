@@ -2,7 +2,9 @@ package com.devop.aashish;
 
 import com.devop.aashish.config.GeneratorConfig;
 import com.devop.aashish.constant.PropertyFileConstant;
-import com.devop.aashish.generator.*;
+import com.devop.aashish.generator.ControllerGenerator;
+import com.devop.aashish.generator.DirectoryGeneration;
+import com.devop.aashish.generator.DomainGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +54,11 @@ public class App {
 
         DirectoryGeneration.createDirectorySkeleton();
 
-        CoreGenerator.generateFiles();
+        //CoreGenerator.generateFiles();
         DomainGenerator.generateFiles();
         ControllerGenerator.generateFiles();
-        ServiceGenerator.generateFiles();
-        RepositoryGenerator.generateFiles();
+        // ServiceGenerator.generateFiles();
+        // RepositoryGenerator.generateFiles();
 
         logger.info("\n === Execution Ends ====\n");
 

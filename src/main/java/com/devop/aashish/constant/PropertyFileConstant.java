@@ -27,6 +27,8 @@ public class PropertyFileConstant {
     public static final String APP_VERSION = "APP_VERSION";
     public static final String SPRING_BOOT_VERSION = "SPRING_BOOT_VERSION";
     public static final String JAVA_VERSION = "JAVA_VERSION";
+    public static final String GENERATE_SUB_RESOURCE = "GENERATE_SUB_RESOURCE";
+    public static final String ENABLE_HARD_DELETE = "ENABLE_HARD_DELETE";
 
 
     public static final String STATIC_RESOURCE = "static_resource";

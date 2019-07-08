@@ -1,7 +1,5 @@
 package com.devop.aashish.utility;
 
-import com.devop.aashish.constant.ApplicationConstant;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

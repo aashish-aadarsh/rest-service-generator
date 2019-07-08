@@ -24,20 +24,22 @@ public class ControllerGenerator {
             String generatedFileName = AttributeHelper.getControllerName(domain) + ApplicationConstant.EXTENSION_JAVA;
             String generatedFileDirectory = DirectoryConfig.PACKAGE_DIRECTORY + File.separator +
                     ApplicationConstant.PACKAGE_CONTROLLER + File.separator + generatedFileName;
-            Map<String, String> paramMap = getValues(domain);
+            Map<String, Object> paramMap = getValues(domain);
             new VelocityConfig().initWriting(paramMap, generatedFileDirectory, templateFileLocation);
         });
     }
 
 
-    private static Map<String, String> getValues(String domain) {
-        Map<String, String> param = new HashMap<>();
+    private static Map<String, Object> getValues(String domain) {
+        Map<String, Object> param = new HashMap<>();
         param.put(TemplateFileConstant.KEY_PACKAGE_ID, GeneratorConfig.PACKAGE_ID);
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_SINGULAR, AttributeHelper.getSingularResource(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_PLURAL, AttributeHelper.getPluralResource(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_SMALL_CASE, AttributeHelper.getResourceSmallCase(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_ALL_SMALL_CASE, AttributeHelper.getResourceAllSmallCase(domain));
         param.put(TemplateFileConstant.KEY_RESOURCE_NAME_API, AttributeHelper.getResourceNameAPI(domain));
+        param.put(TemplateFileConstant.KEY_RESOURCE_SUB_DOMAIN_LOOP, GeneratorConfig.SUB_DOMAIN_SET.get(domain));
+        param.put(TemplateFileConstant.KEY_ATTRIBUTE_HELPER, new AttributeHelper());
         return param;
     }
 }

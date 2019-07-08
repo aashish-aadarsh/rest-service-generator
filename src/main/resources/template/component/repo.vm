@@ -1,7 +1,16 @@
 package ${PackageId}.domain.${ResourceAllSmallCase}.repository;
 
 import ${PackageId}.domain.${ResourceAllSmallCase}.*;
+import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ${ResourceSingular}Repository extends MongoRepository<${ResourceSingular}, String> {
+
+
+#foreach ($subDomain in  ${SubDomainList})
+    Optional<${ResourceSingular}> findBy_idAnd${subDomain}__id(String userProfileId, String userAddressId);
+
+#end
+
+
 }

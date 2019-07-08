@@ -26,6 +26,9 @@ public class TemplateFileConstant {
     public static final String KEY_RESOURCE_NAME_ALL_SMALL_CASE = "ResourceAllSmallCase";
     public static final String KEY_RESOURCE_NAME_API = "ResourceAPI";
 
+    public static final String KEY_RESOURCE_SUB_DOMAIN_LOOP = "SubDomainList";
+    public static final String KEY_ATTRIBUTE_HELPER = "AttributeHelper";
+    public static final String KEY_ENABLE_HARD_DELETE = "EnableHardDelete";
 
 
     public static final String POM_FILE_LOCATION = "template/core/pom.vm";
