@@ -50,7 +50,7 @@ directory.
       Enjoy coding. :)
         
 ## Known Issues       
-While sending JSON for POST operation, the `_id` field of nested entities should not be sent in json otherwise, mongo will not be able to create an ObjectId for nested entities.
+While sending JSON for POST operation, the `_id` field of nested entities should be sent from client ( UUID.randomUUID() ) in json otherwise, mongo will not be able to create an ObjectId for nested entities.
 
 ## Issues
 Feel free to report any issues, change request [Here](https://github.com/aashish-aadarsh/RestServiceGenerator/issues)
