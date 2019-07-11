@@ -16,15 +16,13 @@
       "addressLine1": "",
       "addressLine2": "",
       "landMark": "",
+      "location": "",
       "village": "",
       "pinCode": 813210,
       "district": "",
       "state": "",
       "country": ""
     }
-  ],
-  "userQualification": {
-    "type": "",
-    "year": ""
-  }
+  ]
+  
 }
