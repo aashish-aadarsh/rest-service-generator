@@ -8,7 +8,7 @@ public interface ${ResourceSingular}Repository extends MongoRepository<${Resourc
 
 
 #foreach ($subDomain in  ${SubDomainList})
-    Optional<${ResourceSingular}> findBy_idAnd${subDomain}__id(String userProfileId, String userAddressId);
+    Optional<${ResourceSingular}> findBy_idAnd${subDomain}__id(String ${ResourceSmallCase}Id, String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id);
 
 #end
 
