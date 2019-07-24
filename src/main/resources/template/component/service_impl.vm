@@ -1,25 +1,34 @@
 package ${PackageId}.application.service.impl;
 
 import ${PackageId}.application.exception.InvalidInputException;
+import ${PackageId}.application.constant.ConfigConstant;
+
 import ${PackageId}.application.service.${ResourceSingular}Service;
 import ${PackageId}.application.utility.SecurityUtil;
 import ${PackageId}.configuration.aop.annotation.LogMethodInfo;
 import ${PackageId}.domain.${ResourceAllSmallCase}.*;
 import ${PackageId}.domain.${ResourceAllSmallCase}.repository.${ResourceSingular}Repository;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.bson.types.ObjectId;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 
 @Service
 @Transactional
 @LogMethodInfo
 public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Service {
 
+    private static final Logger logger = LoggerFactory.getLogger(${ResourceSingular}ServiceImpl.class);
 
     @Autowired
     private ${ResourceSingular}Repository ${ResourceSmallCase}Repository;
@@ -61,6 +70,23 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
     }
 
     @Override
+    public Page<${ResourceSingular}> getAll${ResourcePlural}PageAble(Integer pageIndex, Integer pageSize, String direction, String[] fields) {
+        Pageable pageRequest;
+        if (null == pageIndex || pageIndex < 0)
+            pageIndex = ConfigConstant.DEFAULT_PAGE_INDEX;
+
+        if (null == pageSize || pageSize <= 0 || pageSize > ConfigConstant.MAXIMUM_PAGE_SIZE)
+            pageSize = ConfigConstant.MAXIMUM_PAGE_SIZE;
+
+        if (null != direction && null != fields && fields.length != 0)
+            pageRequest = PageRequest.of(pageIndex, pageSize, Sort.Direction.fromString(direction), fields);
+        else {
+            pageRequest = PageRequest.of(pageIndex, pageSize);
+        }
+        return ${ResourceSmallCase}Repository.findAll(pageRequest);
+    }
+
+    @Override
     public List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids) {
         Iterable<String> values = new HashSet<>(Arrays.asList(${ResourceSmallCase}Ids));
         Iterable<${ResourceSingular}> resultItr = ${ResourceSmallCase}Repository.findAllById(values);
@@ -68,47 +94,60 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
     }
 
 #foreach ($subDomain in  ${SubDomainList})
+    #set( $subDomainName = ${AttributeHelper.getSubDomainName($subDomain)} )
+    #set( $subDomainResourceName  = ${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)})
+    #set( $subDomainResourceKeyGetter = ${AttributeHelper.getResourceNameSubDomainGetter($subDomain)})
+    #set( $subDomainResourceNameRepo  = ${AttributeHelper.getResourceNameSubDomainGetter($subDomain)})
     @Override
-    public ${ResourceSingular} save${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}){
+    public ${ResourceSingular} save${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, $subDomainName $subDomainResourceName){
         Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findById(${ResourceSmallCase}Id);
         if (!result.isPresent()) {
             throw new InvalidInputException("Id should be a valid existing DocumentId");
         }
+        logger.debug("Fetched Result From DB for adding child entity...{}", result.get());
         updateAuditFields(result.get());
-        result.get().${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.add(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+        ${subDomainResourceName}._id = new ObjectId().toString();
+
+         if(result.get().get${subDomainResourceKeyGetter}()!=null)
+             result.get().get${subDomainResourceKeyGetter}().add(${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)});
+         else
+             result.get().set${subDomainResourceKeyGetter}(Collections.singletonList(${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)}));
+
         return ${ResourceSmallCase}Repository.save(result.get());
     }
 
      @Override
-     public ${ResourceSingular} update${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}) {
-            Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomain}__id(${ResourceSmallCase}Id, ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}._id);
+     public ${ResourceSingular} update${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, $subDomainName $subDomainResourceName) {
+            Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomainResourceNameRepo}__id(${ResourceSmallCase}Id, ${subDomainResourceName}._id);
             if (!result.isPresent()) {
                 throw new InvalidInputException("Id should be a valid existing DocumentId");
             }
+            logger.debug("Fetched Result From DB for updating child entity...{}", result.get());
             ${ResourceSingular} resultObject = result.get();
-            List<$subDomain> updatedList =
-                    resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.stream().filter(it -> !it._id.equals(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}._id))
+            List<$subDomainName> updatedList =
+                    resultObject.get${subDomainResourceKeyGetter}().stream().filter(it -> !it._id.equals(${subDomainResourceName}._id))
                             .collect(Collectors.toList());
-            updatedList.add(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
-            resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.clear();
-            resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.addAll(updatedList);
+            updatedList.add($subDomainResourceName);
+            resultObject.get${subDomainResourceKeyGetter}().clear();
+            resultObject.get${subDomainResourceKeyGetter}().addAll(updatedList);
             updateAuditFields(resultObject);
             return ${ResourceSmallCase}Repository.save(resultObject);
      }
 
 
     @Override
-    public String delete${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id){
-             Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomain}__id(${ResourceSmallCase}Id, ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id);
+    public String delete${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, String  ${subDomainResourceName}Id){
+             Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomainResourceNameRepo}__id(${ResourceSmallCase}Id, ${subDomainResourceName}Id);
              if (!result.isPresent()) {
                  throw new InvalidInputException("Id should be a valid existing DocumentId");
              }
+             logger.debug("Fetched Result From DB for deleting child entity...{}", result.get());
              ${ResourceSingular} resultObject = result.get();
-             List<$subDomain> updatedList =
-                     resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.stream().filter(it -> !it._id.equals(${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id))
+             List<$subDomainName> updatedList =
+                     resultObject.get${subDomainResourceKeyGetter}().stream().filter(it -> !it._id.equals(${subDomainResourceName}Id))
                              .collect(Collectors.toList());
-             resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.clear();
-             resultObject.${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}.addAll(updatedList);
+             resultObject.get${subDomainResourceKeyGetter}().clear();
+             resultObject.get${subDomainResourceKeyGetter}().addAll(updatedList);
              updateAuditFields(resultObject);
              ${ResourceSmallCase}Repository.save(resultObject);
              return "Success";

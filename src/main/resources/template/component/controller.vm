@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -52,26 +53,49 @@ public class ${ResourceSingular}Controller {
         return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourcePlural}(${ResourceSmallCase}Ids));
     }
 
+
+    @GetMapping("/${ResourceAPI}/pageable/v1")
+    public ResponseEntity<?> getAll${ResourcePlural}PageAble(@RequestParam(value = "pageIndex")
+                                                                     Integer pageIndex,
+                                                             @RequestParam(value = "pageSize")
+                                                                     Integer pageSize,
+                                                             @RequestParam(value = "sortOrder", required = false)
+                                                                     String direction,
+                                                             @RequestParam(value = "sortBy", required = false)
+                                                                     String[] fields) {
+            Page page = ${ResourceSmallCase}Service.getAll${ResourcePlural}PageAble(
+                    pageIndex, pageSize, direction, fields);
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("TotalPageSize", String.valueOf(page.getTotalPages()));
+            responseHeaders.add("TotalElements", String.valueOf(page.getTotalElements()));
+            responseHeaders.add("IsFirst", String.valueOf(page.isFirst()));
+            responseHeaders.add("IsLast", String.valueOf(page.isLast()));
+            return ResponseEntity.ok().headers(responseHeaders).body(page.get());
+        }
+
  #foreach ($subDomain in  ${SubDomainList})
-   @PostMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}")
-    public ResponseEntity<?> save${ResourceSingular}$subDomain(@PathVariable String ${ResourceSmallCase}Id,
-                                                    @Valid @RequestBody $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}) {
-        return ResponseEntity.ok(${ResourceSmallCase}Service.save${ResourceSingular}$subDomain
-                     (${ResourceSmallCase}Id,${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}));
+    #set( $subDomainName = ${AttributeHelper.getSubDomainName($subDomain)} )
+    #set( $subDomainResourceName  = ${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)})
+
+    @PostMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/$subDomainResourceName")
+    public ResponseEntity<?> save${ResourceSingular}$subDomainName(@PathVariable String ${ResourceSmallCase}Id,
+                                                    @Valid @RequestBody $subDomainName $subDomainResourceName) {
+        return ResponseEntity.ok(${ResourceSmallCase}Service.save${ResourceSingular}$subDomainName
+                     (${ResourceSmallCase}Id,$subDomainResourceName));
     }
 
-    @PutMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}")
-     public ResponseEntity<?> update${ResourceSingular}$subDomain(@PathVariable String ${ResourceSmallCase}Id,
-                                                        @Valid @RequestBody $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}) {
-            return ResponseEntity.ok(${ResourceSmallCase}Service.update${ResourceSingular}$subDomain
-                         (${ResourceSmallCase}Id,${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}));
+     @PutMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/$subDomainResourceName")
+     public ResponseEntity<?> update${ResourceSingular}$subDomainName(@PathVariable String ${ResourceSmallCase}Id,
+                                                        @Valid @RequestBody $subDomainName $subDomainResourceName) {
+            return ResponseEntity.ok(${ResourceSmallCase}Service.update${ResourceSingular}$subDomainName
+                         (${ResourceSmallCase}Id,$subDomainResourceName));
      }
 
-    @DeleteMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}/{${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id}")
-     public ResponseEntity<?> delete${ResourceSingular}$subDomain(@PathVariable String ${ResourceSmallCase}Id,
-                                                       @PathVariable String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id) {
-           return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourceSingular}$subDomain
-                        (${ResourceSmallCase}Id,${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id));
+     @DeleteMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/$subDomainResourceName/{${subDomainResourceName}Id}")
+     public ResponseEntity<?> delete${ResourceSingular}$subDomainName(@PathVariable String ${ResourceSmallCase}Id,
+                                                       @PathVariable String ${subDomainResourceName}Id) {
+           return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourceSingular}$subDomainName
+                        (${ResourceSmallCase}Id,${subDomainResourceName}Id));
      }
 
  #end

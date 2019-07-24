@@ -102,12 +102,14 @@ public class AttributeHelper {
         }
         return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "Service";
     }
+
     public static String getServiceImplName(String domain) {
         if (null == domain || domain.trim().isEmpty()) {
             return "ServiceImpl";
         }
         return String.valueOf(domain.charAt(0)).toUpperCase() + domain.substring(1) + "ServiceImpl";
     }
+
     public static String getRepositoryName(String domain) {
         if (null == domain || domain.trim().isEmpty()) {
             return "Repository";
@@ -129,4 +131,27 @@ public class AttributeHelper {
         }
         return String.valueOf(subDomain.charAt(0)).toLowerCase() + subDomain.substring(1);
     }
+
+    public static String getSubDomainName(String subDomain) {
+        if (null == subDomain || subDomain.trim().isEmpty()) {
+            return "subDomain";
+        }
+        if (subDomain.split("<<!!>>").length == 2) {
+            return subDomain.split("<<!!>>")[0];
+        }
+        return subDomain;
+    }
+
+    public static String getResourceNameSubDomainGetter(String subDomain) {
+        if (null == subDomain || subDomain.trim().isEmpty()) {
+            return "subDomain";
+        }
+        if (subDomain.split("<<!!>>").length == 2) {
+            String key = subDomain.split("<<!!>>")[1];
+            return getResourceNameSubDomain(key);
+        }
+        return getResourceNameSubDomain(subDomain);
+    }
+
+
 }

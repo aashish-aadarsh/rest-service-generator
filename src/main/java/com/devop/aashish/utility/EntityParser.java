@@ -8,8 +8,6 @@ import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JPackage;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -57,12 +55,12 @@ public class EntityParser {
 
             @Override
             public boolean isIncludeGetters() {
-                return false;
+                return true;
             }
 
             @Override
             public boolean isIncludeSetters() {
-                return false;
+                return true;
             }
 
             @Override
@@ -70,7 +68,13 @@ public class EntityParser {
                 return false;
             }
 
+            @Override
+            public AnnotationStyle getAnnotationStyle() {
+                return AnnotationStyle.NONE;
+            }
+
         };
+
         try {
             SchemaMapper mapper = new SchemaMapper(new RuleFactory(config, new CustomAnnotator(),
                     new SchemaStore()), new SchemaGenerator());
@@ -78,7 +82,6 @@ public class EntityParser {
             codeModel.build(outputFileDirectory);
             if (Boolean.valueOf(GeneratorConfig.GENERATE_SUB_RESOURCE))
                 addSubDomain(codeModel, className, source);
-            //updateEntity(className);
             updateAllEntity(className);
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,9 +152,16 @@ public class EntityParser {
 
         List<String> subDomainEntity = new ArrayList<>();
         codeModel.packages().forEachRemaining(jPackage -> jPackage.classes().forEachRemaining(jDefinedClass -> {
-            if (!jDefinedClass.name().equalsIgnoreCase(parentDomainEntity)
-                    && arraySets.contains(jDefinedClass.name().toLowerCase())) {
-                subDomainEntity.add(jDefinedClass.name());
+            if (!jDefinedClass.name().equalsIgnoreCase(parentDomainEntity)) {
+                if (arraySets.contains(jDefinedClass.name().toLowerCase())) {
+                    subDomainEntity.add(jDefinedClass.name());
+                } else if (arraySets.contains(jDefinedClass.name().toLowerCase() + "s")) {
+                    subDomainEntity.add(jDefinedClass.name() + "<<!!>>" + jDefinedClass.name() + "s");
+                } else if (arraySets.contains(jDefinedClass.name().toLowerCase() + "list")) {
+                    subDomainEntity.add(jDefinedClass.name() + "<<!!>>" + jDefinedClass.name() + "List");
+
+                }
+
             }
         }));
 
@@ -164,8 +174,8 @@ public class EntityParser {
         public void propertyInclusion(JDefinedClass clazz, JsonNode schema) {
             String className = clazz.name().toLowerCase();
             String parentContainerName = ((JPackage) clazz.parentContainer()).name().toLowerCase();
-            clazz.annotate(Getter.class);
-            clazz.annotate(Setter.class);
+            //clazz.annotate(Getter.class);
+            //clazz.annotate(Setter.class);
             clazz.annotate(Builder.class);
             clazz.annotate(ToString.class);
 

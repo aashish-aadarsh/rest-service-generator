@@ -20,7 +20,18 @@ using [Spring Boot](https://spring.io/projects/spring-boot) and backed with [Mon
 	
         4. domain - Entities and their corresponding repository in different domain directory.
           
-          	
+6. The generated code has below methods for Controller
+
+        1. For every json present in entity, corresponding controller, service, serviceImpl, repository and 
+            domain class are generated.
+        
+        2. The controller has by default, getAll(), getByIds(), getAllByPageAble()- with sort 
+           , save, update list and deleting based on Ids.
+           
+        3. If json has list attributes, then for all 1st level list items, create, update and delete
+           of sub-resources are generated.   
+        
+                      	
 ## NOTES:
 1. Do not add `_id`, `createdByUser`, `updatedByUser`, `isActive`, `createdDateTime`, `updatedDateTime` and `additionalProperties` variables as these are defined in BaseEntity and BaseTransactionalEntity.
 2. Follow the naming convention while defining json file and keys.
@@ -28,6 +39,7 @@ using [Spring Boot](https://spring.io/projects/spring-boot) and backed with [Mon
 4. **Do not use space in Application name as it will decide name of SpringBootClass**.
 5. Modify the property `GENERATE_SUB_RESOURCE` in order to generate sub-resource for each domain.
 6. Modify the property `ENABLE_HARD_DELETE` in order to delete records permanently.
+7. While defining key of a nested json array, append with either `s` or `List`. e.g - `samples or sampleList`. 
 
 ## How to Use :
 
@@ -50,7 +62,11 @@ directory.
       Enjoy coding. :)
         
 ## Known Issues       
-While sending JSON for POST operation, the `_id` field of nested entities should be sent from client ( UUID.randomUUID() ) in json otherwise, mongo will not be able to create an ObjectId for nested entities.
+    1. While sending JSON for POST operation, the `_id` field of nested entities 
+       should be sent from client ( UUID.randomUUID() )  in json otherwise, 
+        mongo will not be able to create an ObjectId for nested entities.
+      
+    2. Usage of Setter and Getter annotation is not possible with private access modifier    
 
 ## Issues
 Feel free to report any issues, change request [Here](https://github.com/aashish-aadarsh/RestServiceGenerator/issues)

@@ -39,6 +39,9 @@ public class TemplateFileConstant {
     public static final String APPLICATION_PROPERTY_FILE_LOCATION = "template/core/resource.vm";
     public static final String APPLICATION_PROPERTY_FILE_NAME = "application.yml";
 
+    public static final String LOMBOK_PROPERTY_FILE_LOCATION = "template/core/config.vm";
+    public static final String LOMBOK_PROPERTY_FILE_NAME = "lombok.config";
+
     public static final String CONTROLLER_FILE_LOCATION = "template/component/controller.vm";
     public static final String SERVICE_FILE_LOCATION = "template/component/service.vm";
     public static final String SERVICE_IMPL_FILE_LOCATION = "template/component/service_impl.vm";

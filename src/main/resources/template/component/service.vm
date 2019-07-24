@@ -3,6 +3,7 @@ package ${PackageId}.application.service;
 import ${PackageId}.domain.${ResourceAllSmallCase}.*;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ${ResourceSingular}Service {
 
@@ -16,12 +17,17 @@ public interface ${ResourceSingular}Service {
 
     List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids);
 
+    Page<${ResourceSingular}> getAll${ResourcePlural}PageAble(Integer pageIndex, Integer pageSize, String direction, String[] fields);
+
 #foreach ($subDomain in  ${SubDomainList})
-    ${ResourceSingular} save${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+    #set( $subDomainName = ${AttributeHelper.getSubDomainName($subDomain)} )
+    #set( $subDomainResourceName  = ${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)})
 
-    ${ResourceSingular} update${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, $subDomain ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)});
+    ${ResourceSingular} save${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, $subDomainName $subDomainResourceName);
 
-    String delete${ResourceSingular}$subDomain(String ${ResourceSmallCase}Id, String ${AttributeHelper.getResourceNameSubDomainSingular($subDomain)}Id);
+    ${ResourceSingular} update${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, $subDomainName $subDomainResourceName);
+
+    String delete${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, String ${subDomainResourceName}Id);
 
 #end
 

@@ -16,6 +16,7 @@ public class CoreGenerator {
         generatePOMFile();
         generateMainClass();
         generatePropertyFile();
+        generateLombokConfigFile();
     }
 
 
@@ -38,6 +39,13 @@ public class CoreGenerator {
         String templateFileLocation = TemplateFileConstant.APPLICATION_PROPERTY_FILE_LOCATION;
         String generatedFileName = TemplateFileConstant.APPLICATION_PROPERTY_FILE_NAME;
         String generatedFileDirectory = DirectoryConfig.RESOURCES_DIRECTORY + File.separator + generatedFileName;
+        new VelocityConfig().initWriting(getValues(), generatedFileDirectory, templateFileLocation);
+    }
+
+    private static void generateLombokConfigFile() {
+        String templateFileLocation = TemplateFileConstant.LOMBOK_PROPERTY_FILE_LOCATION;
+        String generatedFileName = TemplateFileConstant.LOMBOK_PROPERTY_FILE_NAME;
+        String generatedFileDirectory = DirectoryConfig.APP_DIRECTORY + File.separator + generatedFileName;
         new VelocityConfig().initWriting(getValues(), generatedFileDirectory, templateFileLocation);
     }
 
