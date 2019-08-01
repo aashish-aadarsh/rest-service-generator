@@ -1,0 +1,21 @@
+{
+  "name": "Name",
+  "rollNumber": 12345,
+  "aadharCard": 777777777777,
+  "percentage": 78.7,
+  "contact": [
+    {
+      "type": "MOBILE",
+      "value": "8797237700"
+    },
+    {
+      "type": "EMAIL",
+      "value": "sample@something.org"
+    }
+  ],
+  "school": {
+    "schoolName": "schoolName",
+    "schoolCode": "schoolCode",
+    "schoolMedium": "schoolMedium"
+  }
+}
