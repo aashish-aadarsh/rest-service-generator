@@ -5,6 +5,8 @@ import ${PackageId}.application.constant.ConfigConstant;
 
 import ${PackageId}.application.service.${ResourceSingular}Service;
 import ${PackageId}.application.utility.SecurityUtil;
+import ${PackageId}.application.utility.CriteriaUtility;
+
 import ${PackageId}.configuration.aop.annotation.LogMethodInfo;
 import ${PackageId}.domain.${ResourceAllSmallCase}.*;
 import ${PackageId}.domain.${ResourceAllSmallCase}.repository.${ResourceSingular}Repository;
@@ -21,7 +23,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -33,44 +38,109 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
     @Autowired
     private ${ResourceSingular}Repository ${ResourceSmallCase}Repository;
 
+    @Autowired
+    private CriteriaUtility criteriaUtility;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    /**
+     * @param ${ResourceSmallCase}List - input list of resource to be saved
+     * @return persisted list of resource
+     */
+
     @Override
     public List<${ResourceSingular}> save${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List) {
-        ${ResourceSmallCase}List.forEach(this::initAuditFields);
+        preSave(${ResourceSmallCase}List);
+        List<${ResourceSingular}> savedData = ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
+        logger.debug("--->Saved Data...{}", ${ResourceSmallCase}List);
         return ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
     }
 
+    /**
+     * @param ${ResourceSmallCase}List to be updated. The items in the list must have valid existing object Id
+     * @return updated resource list
+     * throws InvalidInput Exception if, any of item in list doesn't have a valid resource identifier
+     */
+
     @Override
     public List<${ResourceSingular}> update${ResourcePlural}(List<${ResourceSingular}> ${ResourceSmallCase}List) {
-        List<${ResourceSingular}> valid${ResourceSingular}List = validateData(${ResourceSmallCase}List);
-        return ${ResourceSmallCase}Repository.saveAll(valid${ResourceSingular}List);
+         preUpdate(${ResourceSmallCase}List);
+         List<${ResourceSingular}> updatedData = ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
+         logger.debug("--->UpdatedData Data...{}", updatedData);
+         return updatedData;
     }
 
 
+    /**
+     * @param ${ResourceSmallCase}Ids to be deleted
+     * @return response message of the operation if success
+     */
     @Override
     public String delete${ResourcePlural}(String[] ${ResourceSmallCase}Ids) {
     #if($EnableHardDelete)
      ${ResourceSmallCase}Repository.deleteAll(get${ResourcePlural}(${ResourceSmallCase}Ids));
     #else
-         List<${ResourceSingular}> deactivatedObjects = get${ResourcePlural}(${ResourceSmallCase}Ids).stream().peek(it -> {
-                 it.isActive = Boolean.FALSE;
-                 if (it.additionalProperties == null || it.additionalProperties.isEmpty())
-                      it.additionalProperties = Collections.singletonMap("InActiveDateTime", new Date());
-                  else
-                      it.additionalProperties.put("InActiveDateTime", new Date());
-         }).collect(Collectors.toList());
+         List<${ResourceSingular}> objectToBeDeleted = preDelete(${ResourceSmallCase}Ids);
+                objectToBeDeleted = objectToBeDeleted.stream().peek(it -> {
+                    it.isActive = Boolean.FALSE;
+                    if (it.additionalProperties == null || it.additionalProperties.isEmpty())
+                        it.additionalProperties = Collections.singletonMap("InActiveDateTime", new Date());
+                    else
+                        it.additionalProperties.put("InActiveDateTime", new Date());
+                }).collect(Collectors.toList());
 
-     ${ResourceSmallCase}Repository.saveAll(deactivatedObjects);
+         ${ResourceSmallCase}Repository.saveAll(objectToBeDeleted);
     #end
         return "Success";
     }
 
+    /**
+     * @return All persisted resource
+     * Advised not to use this, instead use pageable with page size and other filters
+     */
     @Override
     public List<${ResourceSingular}> getAll${ResourcePlural}() {
         return ${ResourceSmallCase}Repository.findAll();
     }
 
+    /**
+     * @param pageIndex           is the parameter to determine the page to be fetched
+     * @param pageSize            is the size of element containing in the page
+     * @param direction           is the sorting direction, either <b>ASC</b> or <b>DESC</b>
+     * @param fields              is the array of fields in which result has to be sorted
+     * @param criteria            is the input criteria to fetch the resource
+     * @param projectedAttributes - Set of fields which response should contains
+     * @return pageable entity of resource with input params
+     *
+     * 1. To use criteria, you can pass a single field or combination of multiple fields.
+     * 2. The limitation is, you can do OR with all parameter / AND with all parameter / AND with multiple ORs.
+     * 3. OR and AND has to be written in caps.
+     *
+     *  Few Examples :
+     *     isActive=true
+     *          -this translates to <b>{ "isActive" : "true" }</b>
+     *
+     *     isActive=true AND field1 = xyz
+     *          - this translates to <b>{ "isActive" : "true", "$and" : [{ "rollNumber" : "10" }] }</b>
+     *
+     *    isActive=false OR field1 = pqr
+     *          - this translates to <b>{ "isActive" : "true", "$or" : [{ "rollNumber" : "10" }] }</b>
+     *              means, AND with clause in $or
+     *
+     *    isActive=false OR rollNumber = 10 OR age <= 30
+     *          - this translates to <b>  { "isActive" : true, "$or" : [{ "rollNumber" : "10" }, { "age" : { "$lte" : "30" } }] }</b>
+     *
+     *    OR isActive=true OR rollNumber=10 OR age<=30
+     *          - this translates to <b> { "$or" : [{ "rollNumber" : "10" }, { "isActive" : "true" }, { "age" : { "$lte" : "30" } }] }</b>
+     *
+     *    AND isActive=true AND rollNumber=10 AND age<=30
+     *          - this translates to <b> { "$and" : [{ "rollNumber" : "10" }, { "isActive" : "true" }, { "age" : { "$lte" : "30" } }] }</b>
+     */
+
     @Override
-    public Page<${ResourceSingular}> getAll${ResourcePlural}PageAble(Integer pageIndex, Integer pageSize, String direction, String[] fields) {
+    public Page<${ResourceSingular}> getAll${ResourcePlural}PageAble(Integer pageIndex, Integer pageSize, String direction, String[] fields,
+                                                                       String criteria, String[] projectedAttributes) {
         Pageable pageRequest;
         if (null == pageIndex || pageIndex < 0)
             pageIndex = ConfigConstant.DEFAULT_PAGE_INDEX;
@@ -83,9 +153,29 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
         else {
             pageRequest = PageRequest.of(pageIndex, pageSize);
         }
-        return ${ResourceSmallCase}Repository.findAll(pageRequest);
+
+
+        Query query = new Query();
+        if (!StringUtils.isEmpty(criteria)) {
+            query = criteriaUtility.getQuery(criteria, ${ResourceSingular}.class);
+        }
+        query.with(pageRequest);
+        if (null != projectedAttributes && projectedAttributes.length > 0) {
+              for (String projectedAttribute : projectedAttributes) {
+                   query.fields().include(projectedAttribute);
+              }
+        }
+        logger.debug("\nQuery.....>  {}", query.toString());
+        List<${ResourceSingular}> list = mongoTemplate.find(query, ${ResourceSingular}.class);
+        Query finalQuery = query;
+        return PageableExecutionUtils.getPage(list, pageRequest, ()
+                       -> mongoTemplate.count(finalQuery, ${ResourceSingular}.class));
     }
 
+    /**
+     * @param ${ResourceSmallCase}Ids - input array of existing resourceIds to be fetched
+     * @return list of resources for set of input resourceIds
+     */
     @Override
     public List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids) {
         Iterable<String> values = new HashSet<>(Arrays.asList(${ResourceSmallCase}Ids));
@@ -98,6 +188,13 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
     #set( $subDomainResourceName  = ${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)})
     #set( $subDomainResourceKeyGetter = ${AttributeHelper.getResourceNameSubDomainGetter($subDomain)})
     #set( $subDomainResourceNameRepo  = ${AttributeHelper.getResourceNameSubDomainGetter($subDomain)})
+
+    /**
+     * @param ${ResourceSmallCase}Id The parent resource identifier
+     * @param $subDomainResourceName  Sub resource value to be persisted
+     * @return the complete resource after adding sub-resource
+     */
+
     @Override
     public ${ResourceSingular} save${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, $subDomainName $subDomainResourceName){
         Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findById(${ResourceSmallCase}Id);
@@ -105,7 +202,6 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
             throw new InvalidInputException("Id should be a valid existing DocumentId");
         }
         logger.debug("Fetched Result From DB for adding child entity...{}", result.get());
-        updateAuditFields(result.get());
         ${subDomainResourceName}._id = new ObjectId().toString();
 
          if(result.get().get${subDomainResourceKeyGetter}()!=null)
@@ -116,6 +212,11 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
         return ${ResourceSmallCase}Repository.save(result.get());
     }
 
+     /**
+     * @param ${ResourceSmallCase}Id The parent resource identifier
+     * @param $subDomainResourceName  Sub resource value to be updated
+     * @return the complete resource after updating sub-resource
+     */
      @Override
      public ${ResourceSingular} update${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, $subDomainName $subDomainResourceName) {
             Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomainResourceNameRepo}__id(${ResourceSmallCase}Id, ${subDomainResourceName}._id);
@@ -130,11 +231,14 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
             updatedList.add($subDomainResourceName);
             resultObject.get${subDomainResourceKeyGetter}().clear();
             resultObject.get${subDomainResourceKeyGetter}().addAll(updatedList);
-            updateAuditFields(resultObject);
             return ${ResourceSmallCase}Repository.save(resultObject);
      }
 
-
+     /**
+      * @param ${ResourceSmallCase}Id The parent resource identifier
+      * @param ${subDomainResourceName}Id  Sub resource value to be deleted
+      * @return the complete resource after deleting sub-resource
+      */
     @Override
     public String delete${ResourceSingular}$subDomainName(String ${ResourceSmallCase}Id, String  ${subDomainResourceName}Id){
              Optional<${ResourceSingular}> result = ${ResourceSmallCase}Repository.findBy_idAnd${subDomainResourceNameRepo}__id(${ResourceSmallCase}Id, ${subDomainResourceName}Id);
@@ -148,20 +252,56 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
                              .collect(Collectors.toList());
              resultObject.get${subDomainResourceKeyGetter}().clear();
              resultObject.get${subDomainResourceKeyGetter}().addAll(updatedList);
-             updateAuditFields(resultObject);
              ${ResourceSmallCase}Repository.save(resultObject);
              return "Success";
     }
 
 
 #end
+     /**
+         * For Initialization of some field
+         * Some custom business rule or some sort of Authorization
+     */
+     private void preSave(List<${ResourceSingular}> inputData) {
+            logger.debug("--->Data processing hook before save..{}", inputData);
+            inputData.forEach(data -> data._id = null);
+            logger.debug("<---Data processing hook before save..{}", inputData);
+     }
+
+     /**
+         * For validation of inputIds
+         * Some custom business rule or some sort of Authorization
+     */
+     private void preUpdate(List<${ResourceSingular}> inputData) {
+            logger.debug("--->Data processing hook before update..{}", inputData);
+            inputData = validateData(inputData);
+            logger.debug("<---Data processing hook before update..{}", inputData);
+     }
+
+     /**
+         * For validation of inputIds
+         * Some custom business rule or some sort of Authorization
+     */
+     private List<${ResourceSingular}> preDelete(String[] ${ResourceSmallCase}Ids) {
+            logger.debug("--->Data processing hook before delete..{}", Arrays.toString(${ResourceSmallCase}Ids));
+            List<${ResourceSingular}> fetchedObjectForDeletion = getSample(${ResourceSmallCase}Ids);
+            logger.debug("<---Data processing hook before save..{}", fetchedObjectForDeletion);
+            return fetchedObjectForDeletion;
+     }
+
+
+    /**
+     *
+     * @param sampleList - checks if the items in list has a valid resource identifier in data store
+     * @return validated list
+     *
+     */
 
     private List<${ResourceSingular}> validateData(List<${ResourceSingular}> ${ResourceSmallCase}List) {
         return ${ResourceSmallCase}List.stream().filter(${ResourceSmallCase} -> {
             if (null != ${ResourceSmallCase}._id && !${ResourceSmallCase}._id.isEmpty()) {
                 Optional<${ResourceSingular}> fetched${ResourceSingular} = ${ResourceSmallCase}Repository.findById(${ResourceSmallCase}._id);
                 if (fetched${ResourceSingular}.isPresent()) {
-                    updateAuditFields(${ResourceSmallCase}, fetched${ResourceSingular}.get());
                     return true;
                 }
                 throw new InvalidInputException("Id should be a valid DocumentId");
@@ -170,24 +310,4 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
 
         }).collect(Collectors.toList());
     }
-
-     private void initAuditFields(${ResourceSingular} ${ResourceSmallCase}){
-             ${ResourceSmallCase}.createdByUser = SecurityUtil.loggedInUser().getUserId();
-             ${ResourceSmallCase}.createdDateTime = new Date();
-             ${ResourceSmallCase}.updatedDateTime = null;
-             ${ResourceSmallCase}._id = null;
-             ${ResourceSmallCase}.isActive =  Boolean.TRUE;
-     }
-
-     private void updateAuditFields(${ResourceSingular} newValue, ${ResourceSingular} existingValue) {
-            newValue.createdDateTime = existingValue.createdDateTime;
-            newValue.createdByUser = existingValue.createdByUser;
-            newValue.updatedByUser = SecurityUtil.loggedInUser().getUserId();
-            newValue.updatedDateTime = new Date();
-     }
-
-     private void updateAuditFields(${ResourceSingular} ${ResourceSmallCase}) {
-            ${ResourceSmallCase}.updatedByUser = SecurityUtil.loggedInUser().getUserId();
-            ${ResourceSmallCase}.updatedDateTime = new Date();
-     }
 }

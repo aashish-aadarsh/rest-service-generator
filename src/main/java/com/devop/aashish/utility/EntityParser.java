@@ -3,11 +3,14 @@ package com.devop.aashish.utility;
 import com.devop.aashish.config.DirectoryConfig;
 import com.devop.aashish.config.GeneratorConfig;
 import com.devop.aashish.constant.ApplicationConstant;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JPackage;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -178,9 +181,13 @@ public class EntityParser {
             //clazz.annotate(Setter.class);
             clazz.annotate(Builder.class);
             clazz.annotate(ToString.class);
+            clazz.annotate(NoArgsConstructor.class);
+            clazz.annotate(AllArgsConstructor.class);
+
 
             if (parentContainerName.endsWith(className)) {
                 clazz.annotate(Document.class).param("collection", AttributeHelper.getDocumentName(clazz.name()));
+                clazz.annotate(JsonInclude.class).param("value", JsonInclude.Include.NON_NULL);
             }
 
         }

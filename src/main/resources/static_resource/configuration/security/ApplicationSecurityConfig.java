@@ -38,6 +38,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationFilter();
     }
 
+    @Autowired
+    private OTPAuthenticationProvider otpAuthenticationProvider;
+
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -52,6 +55,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(otpAuthenticationProvider);
         auth.userDetailsService(userAuthService).passwordEncoder(passwordEncoder());
     }
 

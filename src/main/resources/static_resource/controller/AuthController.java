@@ -31,6 +31,17 @@ public class AuthController {
         return ResponseEntity.ok(authService.authenticateUser(loginRequest));
     }
 
+    @PostMapping("/login/mobile/v1")
+    public ResponseEntity<?> authenticateUserMobile(@RequestParam(name = "mobileNumber") String mobileNumber) {
+        return ResponseEntity.ok(authService.authenticateUserMobile(mobileNumber));
+    }
+
+    @PutMapping("/login/mobile/v1")
+    public ResponseEntity<?> authenticateUserMobileOTP(@RequestParam(name = "mobileNumber") String mobileNumber,
+                                                       @RequestParam(name = "otp") Integer otp) {
+        return ResponseEntity.ok(authService.authenticateUserMobileOTP(mobileNumber,otp));
+    }
+
     @PostMapping("/register/v1")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, @RequestHeader(name = "X-PASS") String password) {
         return ResponseEntity.ok(authService.registerUser(user, password));
@@ -60,4 +71,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.changePassword(email, oldPassword, newPassword));
     }
 
+    @PutMapping("/otp/resend/v1")
+    public ResponseEntity<?> resendOTP(@RequestParam(name = "mobile") String mobile) {
+        return ResponseEntity.ok(authService.resendOTP(mobile));
+    }
+
+    @GetMapping("/health/v1")
+    public ResponseEntity<?> checkHealth() {
+        return ResponseEntity.ok("Service is up and running");
+    }
 }

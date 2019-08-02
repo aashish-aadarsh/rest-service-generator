@@ -17,4 +17,10 @@ public interface AuthService {
     String changePasswordWithOTP(String email, Integer otp, String newPassword);
 
     String changePassword(String email, String oldPassword, String newPassword);
+
+    String authenticateUserMobile(String mobileNumber);
+
+    JwtAuthenticationResponse authenticateUserMobileOTP(String mobileNumber, Integer otp);
+
+    String resendOTP(String mobile);
 }

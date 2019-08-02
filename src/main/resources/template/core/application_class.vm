@@ -6,8 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+/**
+ * This is the entry point of the application to be started.
+ * It can be directly run using jar file with <code>java -jar [fileName].jar </code>
+ *
+ * Or if the application has multiple profiles,
+ *  <code>java -jar -Dspring.profiles.active=[profileName] [fileName].jar</code>
+ */
 
 @SpringBootApplication
 public class ${ApplicationName}  {
@@ -21,6 +26,11 @@ public class ${ApplicationName}  {
         logApplicationStartup(env);
     }
 
+    /**
+     * This method is for logging the basic detail of the application when service is started up
+     * @param env current context of running application
+     *
+     */
     private static void logApplicationStartup(Environment env) {
         String protocol = "http";
 

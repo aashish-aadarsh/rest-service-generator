@@ -9,4 +9,12 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     Optional<User> findByEmail(String email);
     Optional<User> findByEmailAndUserSecurity_Otp(String email, Integer otp);
+
+    Optional<User> findByMobileNumberAndUserSecurity_Otp(String mobile, Integer otp);
+
+    Optional<User> findByMobileNumber(String mobileNumber);
+
+    Optional<User> findByEmailOrMobileNumber(String email, String mobileNumber);
+
+    Optional<User> findByMobileNumberAndUserSecurity_OtpIsNotNull(String mobileNumber);
 }

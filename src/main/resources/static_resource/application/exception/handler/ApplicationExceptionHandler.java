@@ -9,7 +9,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
@@ -17,9 +18,12 @@ import java.util.StringJoiner;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationExceptionHandler.class);
+
 
     @ExceptionHandler(Throwable.class)
     public final ResponseEntity<ErrorResponse> handleException(Exception ex) throws Exception {
+        logger.error("--->Exception occurred while handling request...",ex);
         ErrorResponse.ErrorResponseBuilder builder = new ErrorResponse.ErrorResponseBuilder();
         if (ex instanceof AbstractUncheckedException) {
             AbstractUncheckedException exception = (AbstractUncheckedException) ex;

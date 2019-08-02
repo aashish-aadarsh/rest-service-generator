@@ -1,13 +1,9 @@
 package com.devop.aashish.java.myapplication.domain.user;
 
-import com.devop.aashish.java.myapplication.domain.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import org.springframework.data.annotation.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
@@ -17,12 +13,18 @@ import java.util.Set;
 @ToString
 @Builder
 @Document(collection = "user")
-public class User extends BaseTransactionalEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
 
-    @NotBlank(message = "firstName can not be blank")
-    private String firstName;
+    @Id
+    public String _id;
 
-    private String lastName;
+    public Boolean isActive = Boolean.TRUE;
+
+    @NotBlank(message = "name can not be blank")
+    private String name;
+
     @Email(message = "Not a valid email Id")
     @NotBlank(message = "email can not be blank")
     private String email;
@@ -33,8 +35,9 @@ public class User extends BaseTransactionalEntity {
     @JsonIgnore
     private UserSecurity userSecurity;
 
+    @JsonIgnore
     private Set<UserRole> userRoles;
-    
+
 
 }
 

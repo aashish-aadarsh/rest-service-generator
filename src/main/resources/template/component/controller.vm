@@ -28,32 +28,62 @@ public class ${ResourceSingular}Controller {
     @Autowired
     private ${ResourceSingular}Service ${ResourceSmallCase}Service;
 
+    /**
+     * @param ${ResourceSmallCase}List - input list of resource to be saved
+     * @return persisted list of resource
+     */
     @PostMapping("/${ResourceAPI}/v1")
     public ResponseEntity<?> save${ResourcePlural}(@Valid @RequestBody List<${ResourceSingular}> ${ResourceSmallCase}List) {
         return ResponseEntity.ok(${ResourceSmallCase}Service.save${ResourcePlural}(${ResourceSmallCase}List));
     }
 
+    /**
+     * @return All persisted resource
+     * Advised not to use this, instead use pageable with page size and other filters
+     */
     @GetMapping("/${ResourceAPI}/v1")
     public ResponseEntity<?> getAll${ResourcePlural}() {
         return ResponseEntity.ok(${ResourceSmallCase}Service.getAll${ResourcePlural}());
     }
 
+    /**
+     * @param ${ResourceSmallCase}Ids - input array of existing resourceIds to be fetched
+     * @return list of resources for set of input resourceIds
+     */
     @GetMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Ids}")
     public ResponseEntity<?> get${ResourcePlural}(@PathVariable String[] ${ResourceSmallCase}Ids) {
         return ResponseEntity.ok(${ResourceSmallCase}Service.get${ResourcePlural}(${ResourceSmallCase}Ids));
     }
 
+    /**
+     * @param ${ResourceSmallCase}List to be updated. The items in the list must have valid existing object Id
+     * @return updated resource list
+     * throws InvalidInput Exception if, any of item in list doesn't have a valid resource identifier
+     */
     @PutMapping("/${ResourceAPI}/v1")
     public ResponseEntity<?> update${ResourcePlural}(@Valid @RequestBody List<${ResourceSingular}> ${ResourceSmallCase}List) {
         return ResponseEntity.ok(${ResourceSmallCase}Service.update${ResourcePlural}(${ResourceSmallCase}List));
     }
 
+    /**
+     * @param ${ResourceSmallCase}Ids to be deleted
+     * @return response message of the operation if success
+     */
     @DeleteMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Ids}")
     public ResponseEntity<?> delete${ResourcePlural}(@PathVariable String[] ${ResourceSmallCase}Ids) {
         return ResponseEntity.ok(${ResourceSmallCase}Service.delete${ResourcePlural}(${ResourceSmallCase}Ids));
     }
 
 
+    /**
+     * @param pageIndex           is the parameter to determine the page to be fetched
+     * @param pageSize            is the size of element containing in the page
+     * @param direction           is the sorting direction, either <b>ASC</b> or <b>DESC</b>
+     * @param fields              is the array of fields in which result has to be sorted
+     * @param criteria            is the input criteria to fetch the resource
+     * @param projectedAttributes - Set of fields which response should contains
+     * @return pageable entity of resource with input params
+     */
     @GetMapping("/${ResourceAPI}/pageable/v1")
     public ResponseEntity<?> getAll${ResourcePlural}PageAble(@RequestParam(value = "pageIndex")
                                                                      Integer pageIndex,
@@ -62,9 +92,13 @@ public class ${ResourceSingular}Controller {
                                                              @RequestParam(value = "sortOrder", required = false)
                                                                      String direction,
                                                              @RequestParam(value = "sortBy", required = false)
-                                                                     String[] fields) {
+                                                                     String[] fields,
+                                                             @RequestParam(value = "criteria", required = false)
+                                                                      String criteria,
+                                                             @RequestParam(value = "projectedAttributes", required = false)
+                                                                      String[] projectedAttributes) {
             Page page = ${ResourceSmallCase}Service.getAll${ResourcePlural}PageAble(
-                    pageIndex, pageSize, direction, fields);
+                    pageIndex, pageSize, direction, fields,criteria,projectedAttributes);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.add("TotalPageSize", String.valueOf(page.getTotalPages()));
             responseHeaders.add("TotalElements", String.valueOf(page.getTotalElements()));
@@ -77,6 +111,11 @@ public class ${ResourceSingular}Controller {
     #set( $subDomainName = ${AttributeHelper.getSubDomainName($subDomain)} )
     #set( $subDomainResourceName  = ${AttributeHelper.getResourceNameSubDomainSingular($subDomainName)})
 
+    /**
+     * @param ${ResourceSmallCase}Id The parent resource identifier
+     * @param $subDomainResourceName  Sub resource value to be persisted
+     * @return the complete resource after adding sub-resource
+     */
     @PostMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/$subDomainResourceName")
     public ResponseEntity<?> save${ResourceSingular}$subDomainName(@PathVariable String ${ResourceSmallCase}Id,
                                                     @Valid @RequestBody $subDomainName $subDomainResourceName) {
@@ -84,6 +123,11 @@ public class ${ResourceSingular}Controller {
                      (${ResourceSmallCase}Id,$subDomainResourceName));
     }
 
+    /**
+     * @param ${ResourceSmallCase}Id The parent resource identifier
+     * @param $subDomainResourceName  Sub resource value to be updated
+     * @return the complete resource after updating sub-resource
+     */
      @PutMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/$subDomainResourceName")
      public ResponseEntity<?> update${ResourceSingular}$subDomainName(@PathVariable String ${ResourceSmallCase}Id,
                                                         @Valid @RequestBody $subDomainName $subDomainResourceName) {
@@ -91,6 +135,11 @@ public class ${ResourceSingular}Controller {
                          (${ResourceSmallCase}Id,$subDomainResourceName));
      }
 
+    /**
+     * @param ${ResourceSmallCase}Id The parent resource identifier
+     * @param ${subDomainResourceName}Id  Sub resource value to be deleted
+     * @return the complete resource after deleting sub-resource
+     */
      @DeleteMapping("/${ResourceAPI}/v1/{${ResourceSmallCase}Id}/$subDomainResourceName/{${subDomainResourceName}Id}")
      public ResponseEntity<?> delete${ResourceSingular}$subDomainName(@PathVariable String ${ResourceSmallCase}Id,
                                                        @PathVariable String ${subDomainResourceName}Id) {

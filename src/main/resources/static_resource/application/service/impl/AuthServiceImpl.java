@@ -16,6 +16,8 @@ import com.devop.aashish.java.myapplication.domain.user.User;
 import com.devop.aashish.java.myapplication.domain.user.UserRole;
 import com.devop.aashish.java.myapplication.domain.user.UserSecurity;
 import com.devop.aashish.java.myapplication.domain.user.repository.UserRepository;
+import com.devop.aashish.java.myapplication.configuration.security.OTPAuthenticationToken;
+import com.devop.aashish.java.myapplication.configuration.security.vo.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,23 +70,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User registerUser(User user, String password) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new InvalidInputException("Email Id is already used.");
+        if (userRepository.findByEmailOrMobileNumber(user.getEmail(), user.getMobileNumber()).isPresent()) {
+            throw new InvalidInputException("Email Id Or Mobile Number is already used.");
         } else {
             user.setUserRoles(Collections.singleton(UserRole.builder()
                     .roleCode(SystemRole.USER_ROLE)
                     .roleName(SystemRole.USER_ROLE_NAME)
                     .build()));
+            Integer otp = otpGenerator.generateOTP();
             UserSecurity userSecurity = UserSecurity.builder()
                     .password(passwordEncoder.encode(password))
-                    .otp(otpGenerator.generateOTP())
+                    .otp(otp)
                     .accountBlocked(Boolean.FALSE)
                     .accountVerified(Boolean.FALSE)
                     .build();
 
             user.setUserSecurity(userSecurity);
-            user.createdDateTime = new Date();
-            user.updatedDateTime = null;
             user._id = null;
             return userRepository.save(user);
         }
@@ -100,7 +101,6 @@ public class AuthServiceImpl implements AuthService {
         UserSecurity userSecurity = user.getUserSecurity();
         userSecurity.setAccountVerified(Boolean.TRUE);
         userSecurity.setOtp(null);
-        user.updatedDateTime = new Date();
         userRepository.save(user);
         return SuccessMessage.USER_ACTIVATION;
     }
@@ -114,7 +114,6 @@ public class AuthServiceImpl implements AuthService {
         User user = userOp.get();
         UserSecurity userSecurity = user.getUserSecurity();
         userSecurity.setOtp(otpGenerator.generateOTP());
-        user.updatedDateTime = new Date();
         userRepository.save(user);
         return SuccessMessage.USER_FORGOT_PASSWORD_OTP_GENERATED;
     }
@@ -129,7 +128,6 @@ public class AuthServiceImpl implements AuthService {
         UserSecurity userSecurity = user.getUserSecurity();
         userSecurity.setOtp(null);
         userSecurity.setPassword(passwordEncoder.encode(newPassword));
-        user.updatedDateTime = new Date();
         userRepository.save(user);
         return SuccessMessage.USER_FORGOT_PASSWORD_CHANGED;
     }
@@ -149,8 +147,54 @@ public class AuthServiceImpl implements AuthService {
             throw new UnAuthenticatedException("Old Password is not valid.");
         }
         userSecurity.setPassword(passwordEncoder.encode(newPassword));
-        user.updatedDateTime = new Date();
         userRepository.save(user);
         return SuccessMessage.USER_PASSWORD_CHANGED;
+    }
+
+    @Override
+    public String authenticateUserMobile(String mobileNumber) {
+        Optional<User> userOp = userRepository.findByMobileNumber(mobileNumber);
+        if (!userOp.isPresent()) {
+            throw new InvalidInputException("Mobile Number is Not registered");
+        }
+        User user = userOp.get();
+        UserSecurity userSecurity = user.getUserSecurity();
+        Integer otp = otpGenerator.generateOTP();
+        userSecurity.setOtp(otp);
+        userRepository.save(user);
+        return SuccessMessage.USER_OTP_LOGIN;
+    }
+
+
+    @Override
+    public JwtAuthenticationResponse authenticateUserMobileOTP(String mobileNumber, Integer otp) {
+        Optional<User> userOp = userRepository.findByMobileNumberAndUserSecurity_Otp(mobileNumber, otp);
+        if (!userOp.isPresent()) {
+            throw new UnAuthenticatedException("Mobile Number or OTP not valid.");
+        }
+        User user = userOp.get();
+        UserSecurity userSecurity = user.getUserSecurity();
+        Authentication authentication = authenticationManager.authenticate(
+                new OTPAuthenticationToken(UserPrincipal.create(user, null))
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateUserToken(authentication);
+        userSecurity.setOtp(null);
+        userRepository.save(user);
+        return new JwtAuthenticationResponse(jwt);
+    }
+
+    @Override
+    public String resendOTP(String mobileNumber) {
+        Optional<User> userOp = userRepository.findByMobileNumberAndUserSecurity_OtpIsNotNull(mobileNumber);
+        if (!userOp.isPresent()) {
+            throw new UnAuthenticatedException("Mobile Number not valid or OTP is not generated yet.");
+        }
+        User user = userOp.get();
+        UserSecurity userSecurity = user.getUserSecurity();
+        Integer otp = otpGenerator.generateOTP();
+        userSecurity.setOtp(otp);
+        userRepository.save(user);
+        return SuccessMessage.USER_OTP_RESENT;
     }
 }

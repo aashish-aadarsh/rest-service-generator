@@ -17,7 +17,8 @@ public interface ${ResourceSingular}Service {
 
     List<${ResourceSingular}> get${ResourcePlural}(String[] ${ResourceSmallCase}Ids);
 
-    Page<${ResourceSingular}> getAll${ResourcePlural}PageAble(Integer pageIndex, Integer pageSize, String direction, String[] fields);
+    Page<${ResourceSingular}> getAll${ResourcePlural}PageAble(Integer pageIndex, Integer pageSize, String direction, String[] fields,
+                                                                            String criteria,String[] projectedAttributes);
 
 #foreach ($subDomain in  ${SubDomainList})
     #set( $subDomainName = ${AttributeHelper.getSubDomainName($subDomain)} )
