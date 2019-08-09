@@ -43,10 +43,10 @@ public class AttributeHelper {
      * @param resourceName Name of resource
      * @return The controller name for a resource file.
      *
-     * <eg>
+     *
      * if a resource file name is UserDemographicAddress,
      * the controller name generated would be UserDemographicAddressController
-     * </eg>
+     *
      */
     public static String getControllerName(String resourceName) {
         if (null == resourceName || resourceName.trim().isEmpty()) {

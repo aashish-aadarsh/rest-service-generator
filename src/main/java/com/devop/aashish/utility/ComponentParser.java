@@ -23,10 +23,10 @@ public class ComponentParser {
      * @param resourceName Name of resource
      * @return The xml name for a resource file.
      *
-     * <eg>
+     *
      * if a resource file name is UserDemographicAddress,
      * the table name generated would be user_demographic_address
-     * </eg>
+     *
      */
     public static String getPascalCaseName(String resourceName) {
         if (null == resourceName || resourceName.trim().isEmpty()) {

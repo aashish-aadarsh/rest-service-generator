@@ -54,7 +54,7 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
         preSave(${ResourceSmallCase}List);
         List<${ResourceSingular}> savedData = ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
         logger.debug("--->Saved Data...{}", ${ResourceSmallCase}List);
-        return ${ResourceSmallCase}Repository.saveAll(${ResourceSmallCase}List);
+        return savedData;
     }
 
     /**
@@ -284,7 +284,7 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
      */
      private List<${ResourceSingular}> preDelete(String[] ${ResourceSmallCase}Ids) {
             logger.debug("--->Data processing hook before delete..{}", Arrays.toString(${ResourceSmallCase}Ids));
-            List<${ResourceSingular}> fetchedObjectForDeletion = getSample(${ResourceSmallCase}Ids);
+            List<${ResourceSingular}> fetchedObjectForDeletion = get${ResourcePlural}(${ResourceSmallCase}Ids);
             logger.debug("<---Data processing hook before save..{}", fetchedObjectForDeletion);
             return fetchedObjectForDeletion;
      }
@@ -292,7 +292,7 @@ public class ${ResourceSingular}ServiceImpl implements ${ResourceSingular}Servic
 
     /**
      *
-     * @param sampleList - checks if the items in list has a valid resource identifier in data store
+     * @param ${ResourceSmallCase}List - checks if the items in list has a valid resource identifier in data store
      * @return validated list
      *
      */

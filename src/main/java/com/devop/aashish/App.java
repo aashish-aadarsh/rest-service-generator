@@ -22,7 +22,8 @@ import java.io.IOException;
  * </p>
  * <code>
  * java -jar RestServiceGenerator.jar 'D://PathToPropertiesFolder//'
- * <p>
+ *
+ *
  * java -jar RestServiceGenerator.jar
  * </code>
  */
