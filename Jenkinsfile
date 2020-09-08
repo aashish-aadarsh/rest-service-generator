@@ -7,5 +7,11 @@ pipeline {
       }
     }
 
+    stage('build') {
+      steps {
+        bat(script: 'mvn clean package', returnStatus: true, returnStdout: true)
+      }
+    }
+
   }
 }
