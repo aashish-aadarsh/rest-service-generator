@@ -43,7 +43,7 @@ using [Spring Boot](https://spring.io/projects/spring-boot) and backed with [Mon
 
 ## How to Use :
 
-1. Download the [RestServiceGenerator.zip](https://github.com/aashish-aadarsh/RestServiceGenerator/raw/master/RestServiceGenerator.zip) and extract to some directory.
+1. Download the [RestServiceGenerator.zip](https://github.com/aashish-aadarsh/rest-service-generator/raw/master/RestServiceGenerator.zip) and extract to some directory.
 
 2. Go to extracted directory, you will find `RestServiceGenerator.jar` and `properties` 
 directory.
